@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="logImpl" value="LOG4J2"/>
+    </settings>
+
+    <typeAliases>
+        <typeAlias alias="demoVO" type="pers.fs.demo.bean.vo.DemoVO"/>
+        <typeAlias alias="demoBO" type="pers.fs.demo.bean.bo.DemoBO"/>
+        <typeAlias alias="demoPO" type="pers.fs.demo.bean.po.DemoPO"/>
+    </typeAliases>
+
+    <mappers>
+        <mapper resource="mapper/demo.xml"/>
+    </mappers>
+</configuration>

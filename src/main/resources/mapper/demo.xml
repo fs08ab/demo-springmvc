@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.fs.demo.mapper.DemoMapper">
+    <resultMap id="demoResult" type="demoVO">
+        <result column="co1l" property="prop1"/>
+        <result column="co12" property="prop2"/>
+    </resultMap>
+
+    <sql id="selCols">
+        <trim>
+            id, col1, col2, create_time, update_time
+        </trim>
+    </sql>
+    <sql id="insCols">
+        <trim>
+            col1, col2, create_time, update_time
+        </trim>
+    </sql>
+
+    <insert id="upsertDemo">
+        insert into t_demo (<include refid="insCols"/>)
+        values
+        <trim prefix="(" suffix=")">
+            #{prop1}, #{prop2}, now(), now()
+        </trim>
+        on duplicate key update update_time = now();
+    </insert>
+
+    <select id="selectDemo" parameterType="demoBO" resultMap="demoResult">
+        SELECT
+        <include refid="selCols"/>
+        FROM t_demo
+        <where>
+            <if test="prop1 != null and prop1 != ''">
+                AND col1 = #{prop1}
+            </if>
+            <if test="prop2 != null and prop2 != ''">
+                AND col2 = #{prop2}
+            </if>
+        </where>
+    </select>
+</mapper>

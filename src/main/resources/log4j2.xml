@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    status : 这个用于设置log4j2自身内部的信息输出,可以不设置,当设置成trace时,会看到log4j2内部各种详细输出
+    monitorInterval : Log4j能够自动检测修改配置文件和重新配置本身, 设置间隔秒数。
+    <Configuration status="warn" monitorInterval="600">
+-->
+<Configuration status="warn">
+    <Properties>
+        <Property name="log_pathname">${log_pathname}</Property>
+        <Property name="log_filename">${log_filename}</Property>
+        <Property name="log_root_lvl">${log_root_lvl}</Property>
+        <Property name="log_console_lvl">${log_console_lvl}</Property>
+        <Property name="log_file_lvl">${log_file_lvl}</Property>
+        <!--
+                %d{yyyy-MM-dd HH:mm:ss, SSS} : 日志产生时间
+                %p : 日志输出格式
+                %c : logger的名称
+                %m : 日志内容，即 logger.info("message")
+                %n : 换行符
+                %C : Java类名
+                %L : 日志输出所在行数
+                %M : 日志输出所在方法名
+                hostName : 本地机器名
+                hostAddress : 本地ip地址
+        -->
+        <Property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss} [%t] [%c{1}.%M()] %-5level - %msg%xEx%n</Property>
+        <Property name="archive_size">200MB</Property>
+        <Property name="archive_pattern">$${date:yyyy-MM}/xxx-%d{yyyyMMdd}-%i.log.gz</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="consoleAppender" target="SYSTEM_OUT">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <!--<ThresholdFilter level="debug" onMatch="ACCEPT" onMisMatch="DENY"/>-->
+            <PatternLayout pattern="${log_pattern}"/>
+        </Console>
+        <!--日志文件每次超过size大小，则会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+        <!--存档文件名称可以使用 filePattern="logs/$${date:yyyy-MM}/xxx-%d{yyyyMMdd}-%i.log.gz"指定 -->
+        <RollingFile name="fileAppender" fileName="${log_pathname}/${log_filename}"
+                     filePattern="${log_pathname}/${archive_pattern}">
+            <PatternLayout pattern="${log_pattern}"/>
+            <Policies>
+                <!-- 每天归档1次 -->
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+                <!-- 压缩包最大值为${archive_size} -->
+                <SizeBaseDTriggeringPolicy size="${archive_size}"/>
+            </Policies>
+            <!-- DefaultRolloverStrategy属性如不设置，则默认为最多同一文件夹下7个文件，这里设置了20 -->
+            <!--<DefaultRolloverStrategy max="20"/>-->
+            <!--自动删除超过120天的日志压缩文件-->
+            <DefaultRolloverStrategy>
+                <Delete basePath="${baseDir}" maxDepth="2">
+                    <IfFileName glob="*/*.log.gz"/>
+                    <IfLastModified age="120d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+            <Filters>
+                <ThresholdFilter level="WARN" onMatch="ACCEPT" onMisMatch="NEUTRAL"/>
+            </Filters>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <AsyncLogger name="org.springframework" level="WARN"/>
+        <AsyncLogger name="org.apache" level="WARN"/>
+        <!--<Root level="WARN">-->
+            <!--<Appender-ref ref="consoleAppender" level="WARN"/>-->
+            <!--<Appender-ref ref="fileAppender" level="OFF"/>-->
+        <!--</Root>-->
+        <!-- 如果要使用log4j2的AsyncLogger，则需要引入com.lmax.disruptor包 -->
+        <AsyncRoot level="${log_root_lvl}" additivity="false" includeLocation="true">
+            <Appender-ref ref="consoleAppender" level="${log_console_lvl}"/>
+            <Appender-ref ref="fileAppender" level="${log_file_lvl}"/>
+        </AsyncRoot>
+    </Loggers>
+</Configuration>

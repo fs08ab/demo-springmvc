@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+    <context-param>
+        <param-name>log4jConfiguration</param-name>
+        <param-value>classpath:log4j2.xml</param-value>
+    </context-param>
+    <!-- 对于log4j2，Servlet2.5以前的版本需要此项配置，在Servlet 3.0以上被log4j-web-2.4.1.jar“自动”初始化了 -->
+    <!--<listener>
+        <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>
+    </listener>-->
+
+    <!-- 配置shiro -->
+    <filter>
+        <!-- 通过spring代理配置过滤器，此处的filterName对应spring容器中的beanName -->
+        <filter-name>securityFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <!-- 过滤器的生命周期循环管理 -->
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>securityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 配置spring -->
+    <servlet>
+        <servlet-name>springServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:context/spring-context.xml</param-value>
+        </init-param>
+        <!-- 配置shiro时，此项必须配置，否则shiro会在context实例化完成前执行，导致报错 -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>springServlet</servlet-name>
+        <!-- 若配置为/*，请求依然会被dispatcherServlet正确转发，但若返回jsp页面，会被再次拦截，导致404（直接请求jsp也同样会报404） -->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+</web-app>

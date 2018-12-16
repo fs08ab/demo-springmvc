@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="securityFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/login.html"/>
+        <property name="successUrl" value="/index.html"/>
+        <property name="unauthorizedUrl" value="unauthorized.html"/>
+        <property name="filterChainDefinitions">
+            <value>
+                <!-- 过滤时，从上往下匹配到第一个生效后，则后面的不再匹配 -->
+                <!-- anon：可以匿名访问-->
+                <!-- authc：认证后才能访问-->
+                <!--/**=anon-->
+                <!--/login.html=anon-->
+                <!--/demo=anon-->
+                <!--/admin/**=authc,roles[admin]-->
+                <!--/doc/**=authc,perms[document:read]-->
+                <!--/**=authc-->
+            </value>
+        </property>
+    </bean>
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="jdbcRealm"/>
+    </bean>
+
+    <bean id="jdbcRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 如果只控制到角色一级，不控制到权限级别，就不需要设置了 -->
+        <property name="permissionsLookupEnabled" value="true"/>
+    </bean>
+
+    <!-- spring提供的钩子bean，可以使bean在spring容器中创建时进行“post处理” -->
+    <!-- shiro生命周期处理器，保证实现了shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+    <!-- 支持注解配置权限 -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor">
+        <property name="proxyTargetClass" value="true"/>
+    </bean>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+</beans>
