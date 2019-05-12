@@ -40,6 +40,6 @@
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionTemplateBeanName" value="simpleSqlSessionTemplate"/>
-        <property name="basePackage" value="pers.fs.demo.mapper"/>
+        <property name="basePackage" value="me.fs.demo.mapper"/>
     </bean>
 </beans>

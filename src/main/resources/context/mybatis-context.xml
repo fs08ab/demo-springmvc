@@ -7,9 +7,9 @@
     </settings>
 
     <typeAliases>
-        <typeAlias alias="demoVO" type="pers.fs.demo.bean.vo.DemoVO"/>
-        <typeAlias alias="demoBO" type="pers.fs.demo.bean.bo.DemoBO"/>
-        <typeAlias alias="demoPO" type="pers.fs.demo.bean.po.DemoPO"/>
+        <typeAlias alias="demoVO" type="me.fs.demo.bean.vo.DemoVO"/>
+        <typeAlias alias="demoBO" type="me.fs.demo.bean.bo.DemoBO"/>
+        <typeAlias alias="demoPO" type="me.fs.demo.bean.po.DemoPO"/>
     </typeAliases>
 
     <mappers>

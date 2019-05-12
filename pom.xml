@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>pers.fs.demo</groupId>
+    <groupId>me.fs.demo</groupId>
     <artifactId>demo-springmvc</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
@@ -183,7 +183,8 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <webappDirectory>/web</webappDirectory>
+                    <!-- 此处的webappDirectory并非对应/src/main/webapp，而是用于配置Artifacts->Output directory -->
+                    <!--<webappDirectory>/src/main/webapp</webappDirectory>-->
                     <warName>${project.artifactId}-${project.version}</warName>
                 </configuration>
             </plugin>

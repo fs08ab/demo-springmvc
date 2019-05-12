@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="pers.fs.demo.mapper.DemoMapper">
+<mapper namespace="me.fs.demo.mapper.DemoMapper">
     <resultMap id="demoResult" type="demoVO">
         <result column="co1l" property="prop1"/>
         <result column="co12" property="prop2"/>
